@@ -2,11 +2,6 @@ import requests
 from django.conf import settings
 
 from contentapi.celery import app
-from contentapi.settings import (
-    CELERY_TASK_PULL_API_URL,
-    CELERY_TASK_STORE_API_URL,
-)
-from contents.models import Content
 from contents.utils import ContentFetcher, ContentPusher
 
 
