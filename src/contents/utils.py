@@ -106,7 +106,6 @@ class ContentFetcher:
 
 from contents.models import Content, Comment
 
-logger = logging.getLogger(__name__)
 
 
 class ContentPusher:
@@ -121,7 +120,7 @@ class ContentPusher:
             if content:
                 self.handle_comment_posting(content)
             else:
-                logger.info("No content available to push.")
+                pass
             time.sleep(30)  # Wait 30 seconds between each push to respect rate limits
 
     def handle_comment_posting(self, content):
@@ -131,7 +130,7 @@ class ContentPusher:
             comment_data = response.json()
             self.post_comment(content, comment_data)
         else:
-            logger.error(f"Comment Generation Failed: {response}")
+            pass
 
     def generate_comment(self, content):
         data = {
@@ -148,14 +147,14 @@ class ContentPusher:
                     json=data,
                 )
                 if response.ok:
-                    logger.info(f"AI Comment generated successfully for content {content.unique_id}")
+                    pass
                     return response
-                logger.warning(f"Failed to generate AI comment: {response.json()}")
+                pass
             except requests.RequestException as e:
-                logger.error(f"Request exception: {e}")
+                pass
             time.sleep(5)
 
-        logger.error("Failed to generate AI comment after retries")
+        pass
         return None
 
     def post_comment(self, content, comment_data):
@@ -174,17 +173,17 @@ class ContentPusher:
                     content.is_pushed = True
                     content.save()
                     self.save_comment_data(comment_data, content)
-                    logger.info(f"Comment successfully posted for content {content.unique_id}")
+                    pass
                     return
                 elif (
                         response.status_code == 400
                         and "This content is not available for commenting" in response.json().get("error", "")
                 ):
-                    logger.warning("This content is not available for commenting, skipping")
+                    pass
                     return
-                logger.warning(f"Failed to post comment: {response.json()}")
+                pass
             except requests.RequestException as e:
-                logger.error(f"Request exception: {e}")
+                pass
             time.sleep(5)
 
         logger.error("Failed to post comment after retries")
