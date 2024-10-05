@@ -1,13 +1,25 @@
 import requests
-from contentapi.celery import app
+from django.conf import settings
 
-@app.task(queue="content_pull")
+from contentapi.celery import app
+from contentapi.settings import (
+    CELERY_TASK_PULL_API_URL,
+    CELERY_TASK_STORE_API_URL,
+)
+from contents.models import Content
+from contents.utils import ContentFetcher
+
+
+def pull_and_store_content():
+    res = requests.get(CELERY_TASK_PULL_API_URL).json()
+    for item in res:
+        payload = {**item}
+        requests.post(CELERY_TASK_STORE_API_URL, json=payload)
+
+@app.task(queue="contentapi.content_pull")
 def pull_and_store_content():
     # TODO: The design of this celery task is very weird. It's posting the response to localhost:3000.
     #  which is not ideal
-    url = "https://example.com/api/pull_data"
-    api_url = "http://localhost:3000/contents/"
-    res = requests.get(url).json()
-    for item in res:
-        payload = {**item}
-        requests.post(api_url, json=payload)
+
+    fetcher = ContentFetcher()
+    fetcher.fetch_contents()

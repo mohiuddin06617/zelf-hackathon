@@ -12,14 +12,18 @@ services:
       POSTGRES_PASSWORD: django
     expose:
       - 5432
+    ports:
+      - "5432:5432"
 
   redis:
     restart: on-failure
     image: redis:7.2.1
     expose:
       - 6379
+    ports:
+      - "6379:6379"
 
-  app:
+  app: &app
     container_name: contentapi
     build:
       context: .
@@ -40,3 +44,30 @@ services:
     environment:
       DATABASE_URL: postgres://django:django@db/contentapi
       REDIS_URL: redis://redis:6379/1
+
+#  celery-task-processor:
+#    build:
+#      context: .
+#      args:
+#        - MODE=DEVELOPMENT
+#      container_name: celery-task-processor
+#      command: "celery -A contentapi.celery worker -l info -Q contentapi.content_pull --hostname=basic@%h --logfile=/code/logs/celery.log"
+##      volumes:
+##        - ./logs/celery-task-processor/:/code/logs/
+#      depends_on:
+#        - redis
+##    command: ["celery", "-A", "contentapi.celery", "worker",
+##              "--loglevel=INFO", "--pool=gevent",
+##              "-n celery-task-processor@%%h"]
+
+#  celery-task-beat:
+#    build:
+#      context: .
+#      args:
+#        - MODE=DEVELOPMENT
+#      container_name: celery-task-beat
+#      command: "celery -A contentapi.celery beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler --logfile=/code/logs/celery.log"
+##      volumes:
+##        - ./logs/celery-task-beat/:/code/logs/
+#      depends_on:
+#        - redis

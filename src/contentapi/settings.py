@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import os
 from pathlib import Path
 import environ
 
@@ -28,7 +28,7 @@ SECRET_KEY = "django-insecure-14^vo1uhac=b!9o12a$^vy#63gsxkd31qij==dm_%yp!3qd*jh
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1", "0.0.0.0"]
 
 
 # Application definition
@@ -131,3 +131,15 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+AUTH_USER_MODEL = "contents.User"
+
+CONTENT_API_HEADER_X_API_KEY = "05825ac5sk_d10esk_42bcsk_9999sk_94c3dea310db1728067022"
+
+CELERY_TASK_STORE_API_URL = "http://localhost:3000/contents/"
+CELERY_TASK_PULL_API_URL = "https://example.com/api/pull_data"
+API_BASE_URL = "https://hackapi.hellozelf.com"
+
+
+CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
+CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/0"
