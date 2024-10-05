@@ -7,14 +7,8 @@ from contentapi.settings import (
     CELERY_TASK_STORE_API_URL,
 )
 from contents.models import Content
-from contents.utils import ContentFetcher
+from contents.utils import ContentFetcher, ContentPusher
 
-
-def pull_and_store_content():
-    res = requests.get(CELERY_TASK_PULL_API_URL).json()
-    for item in res:
-        payload = {**item}
-        requests.post(CELERY_TASK_STORE_API_URL, json=payload)
 
 @app.task(queue="contentapi.content_pull")
 def pull_and_store_content():
@@ -23,3 +17,8 @@ def pull_and_store_content():
 
     fetcher = ContentFetcher()
     fetcher.fetch_contents()
+
+@app.task(queue="contentapi.push_content")
+def content_pusher():
+    content_pusher = ContentPusher()
+    content_pusher.push()
