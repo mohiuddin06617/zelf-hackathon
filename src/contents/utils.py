@@ -3,7 +3,7 @@ import time
 import requests
 
 from contentapi import settings
-from contents.models import Content, Author
+from contents.models import Content, Author, Comment
 
 
 class ContentFetcher:
@@ -172,7 +172,6 @@ class ContentPusher:
                 if response.status_code == 201:
                     content.is_pushed = True
                     content.save()
-                    self.save_comment_data(comment_data, content)
                     pass
                     return
                 elif (
@@ -186,13 +185,5 @@ class ContentPusher:
                 pass
             time.sleep(5)
 
-        logger.error("Failed to post comment after retries")
+       #"Failed to post comment after retries"
 
-    def save_comment_data(self, comment_data, content):
-        Comment.objects.create(
-            unique_id=comment_data['id'],
-            content=content,
-            text=comment_data['comment_text'],
-            posted=True,
-            data=comment_data
-        )
